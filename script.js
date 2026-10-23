@@ -7,6 +7,10 @@ let books = [];
 let authors = [];
 let currentUser = null;
 
+// ==============================
+// PESAN DAN UTILITAS
+// ==============================
+
 function showMessage(selector, text) {
     const element = $(selector);
     if (element) element.textContent = text;
@@ -22,7 +26,10 @@ function escapeHTML(value) {
     })[character]);
 }
 
-// Navigasi dashboard, buku, dan penulis
+// ==============================
+// NAVIGASI
+// ==============================
+
 function showPage(page) {
     document.querySelectorAll(".page-section").forEach((section) => {
         section.classList.toggle("active", section.id === `${page}Page`);
@@ -34,13 +41,18 @@ function showPage(page) {
 }
 
 document.querySelectorAll(".nav-item").forEach((button) => {
-    button.addEventListener("click", () => showPage(button.dataset.page));
+    button.addEventListener("click", () => {
+        showPage(button.dataset.page);
+    });
 });
 
 $("#exploreBtn")?.addEventListener("click", () => showPage("books"));
 $("#viewBooksBtn")?.addEventListener("click", () => showPage("books"));
 
-// Memastikan pengguna sudah login
+// ==============================
+// AUTENTIKASI SUPABASE
+// ==============================
+
 async function getUser() {
     const { data, error } = await supabase.auth.getUser();
 
@@ -53,27 +65,30 @@ async function getUser() {
     return currentUser;
 }
 
-// Mengambil token login untuk dikirim ke backend
 async function getAccessToken() {
     const { data, error } = await supabase.auth.getSession();
 
     if (error || !data.session?.access_token) {
+        window.location.replace("login.html");
         throw new Error("Sesi login tidak ditemukan. Silakan login kembali.");
     }
 
     return data.session.access_token;
 }
 
-// Fungsi utama fetch untuk komunikasi dengan backend
+// ==============================
+// FETCH KE BACKEND EXPRESS
+// ==============================
+
 async function apiRequest(endpoint, options = {}) {
     const token = await getAccessToken();
 
     const response = await fetch(endpoint, {
         ...options,
         headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`,
-            ...options.headers
+            ...(options.body ? { "Content-Type": "application/json" } : {}),
+            ...options.headers,
+            Authorization: `Bearer ${token}`
         }
     });
 
@@ -104,7 +119,10 @@ async function apiRequest(endpoint, options = {}) {
     return result;
 }
 
-// Memuat buku dan penulis dari API backend
+// ==============================
+// MEMUAT DATA
+// ==============================
+
 async function loadData() {
     await getUser();
 
@@ -129,7 +147,10 @@ async function loadData() {
     renderAuthors();
 }
 
-// Menampilkan daftar buku
+// ==============================
+// MENAMPILKAN BUKU
+// ==============================
+
 function renderBooks() {
     if ($("#totalBooks")) {
         $("#totalBooks").textContent = books.length;
@@ -153,18 +174,26 @@ function renderBooks() {
                             <td>${escapeHTML(book.title)}</td>
                             <td>${escapeHTML(book.slug || "—")}</td>
                             <td>
-                                <button type="button" class="action-btn"
-                                    data-action="edit-book" data-id="${escapeHTML(book.id)}">
+                                <button
+                                    type="button"
+                                    class="action-btn"
+                                    data-action="edit-book"
+                                    data-id="${escapeHTML(book.id)}">
                                     Edit
                                 </button>
-                                <button type="button" class="action-btn delete"
-                                    data-action="delete-book" data-id="${escapeHTML(book.id)}">
+                                <button
+                                    type="button"
+                                    class="action-btn delete"
+                                    data-action="delete-book"
+                                    data-id="${escapeHTML(book.id)}">
                                     Hapus
                                 </button>
                             </td>
                         </tr>
                     `).join("") : `
-                        <tr><td colspan="4">Belum ada data buku.</td></tr>
+                        <tr>
+                            <td colspan="4">Belum ada data buku.</td>
+                        </tr>
                     `}
                 </tbody>
             </table>
@@ -189,7 +218,9 @@ function renderBooks() {
                             <td><span class="live-badge">ACTIVE</span></td>
                         </tr>
                     `).join("") : `
-                        <tr><td colspan="3">Belum ada data buku.</td></tr>
+                        <tr>
+                            <td colspan="3">Belum ada data buku.</td>
+                        </tr>
                     `}
                 </tbody>
             </table>
@@ -197,7 +228,10 @@ function renderBooks() {
     }
 }
 
-// Menampilkan daftar penulis
+// ==============================
+// MENAMPILKAN PENULIS
+// ==============================
+
 function renderAuthors() {
     if ($("#totalAuthors")) {
         $("#totalAuthors").textContent = authors.length;
@@ -219,18 +253,26 @@ function renderAuthors() {
                             <td>${escapeHTML(author.id)}</td>
                             <td>${escapeHTML(author.name)}</td>
                             <td>
-                                <button type="button" class="action-btn"
-                                    data-action="edit-author" data-id="${escapeHTML(author.id)}">
+                                <button
+                                    type="button"
+                                    class="action-btn"
+                                    data-action="edit-author"
+                                    data-id="${escapeHTML(author.id)}">
                                     Edit
                                 </button>
-                                <button type="button" class="action-btn delete"
-                                    data-action="delete-author" data-id="${escapeHTML(author.id)}">
+                                <button
+                                    type="button"
+                                    class="action-btn delete"
+                                    data-action="delete-author"
+                                    data-id="${escapeHTML(author.id)}">
                                     Hapus
                                 </button>
                             </td>
                         </tr>
                     `).join("") : `
-                        <tr><td colspan="3">Belum ada data penulis.</td></tr>
+                        <tr>
+                            <td colspan="3">Belum ada data penulis.</td>
+                        </tr>
                     `}
                 </tbody>
             </table>
@@ -238,23 +280,34 @@ function renderAuthors() {
     }
 }
 
-// Reset form buku
+// ==============================
+// RESET FORM
+// ==============================
+
 function resetBookForm() {
     $("#bookForm")?.reset();
+
     if ($("#bookId")) $("#bookId").value = "";
     if ($("#bookSubmit")) $("#bookSubmit").textContent = "+ Simpan Buku";
     if ($("#cancelBookEdit")) $("#cancelBookEdit").hidden = true;
+
+    showMessage("#bookMessage", "");
 }
 
-// Reset form penulis
 function resetAuthorForm() {
     $("#authorForm")?.reset();
+
     if ($("#authorId")) $("#authorId").value = "";
     if ($("#authorSubmit")) $("#authorSubmit").textContent = "+ Simpan Penulis";
     if ($("#cancelAuthorEdit")) $("#cancelAuthorEdit").hidden = true;
+
+    showMessage("#authorMessage", "");
 }
 
-// CREATE dan UPDATE buku menggunakan fetch
+// ==============================
+// CREATE DAN UPDATE BUKU
+// ==============================
+
 $("#bookForm")?.addEventListener("submit", async (event) => {
     event.preventDefault();
 
@@ -270,7 +323,7 @@ $("#bookForm")?.addEventListener("submit", async (event) => {
     }
 
     const duplicate = books.some((book) =>
-        String(book.id) !== id &&
+        String(book.id) !== String(id) &&
         book.slug?.toLowerCase() === slug
     );
 
@@ -280,13 +333,13 @@ $("#bookForm")?.addEventListener("submit", async (event) => {
     }
 
     const submitButton = $("#bookSubmit");
-    submitButton.disabled = true;
+    if (submitButton) submitButton.disabled = true;
 
     try {
-        await getUser();
-
         await apiRequest(
-            id ? `/api/books/${encodeURIComponent(id)}` : "/api/books",
+            id
+                ? `/api/books/${encodeURIComponent(id)}`
+                : "/api/books",
             {
                 method: id ? "PUT" : "POST",
                 body: JSON.stringify({ title, slug })
@@ -302,13 +355,16 @@ $("#bookForm")?.addEventListener("submit", async (event) => {
         await loadData();
     } catch (error) {
         console.error("Gagal menyimpan buku:", error);
-        showMessage("#bookMessage", "Gagal menyimpan buku: " + error.message);
+        showMessage("#bookMessage", `Gagal menyimpan buku: ${error.message}`);
     } finally {
-        submitButton.disabled = false;
+        if (submitButton) submitButton.disabled = false;
     }
 });
 
-// CREATE dan UPDATE penulis menggunakan fetch
+// ==============================
+// CREATE DAN UPDATE PENULIS
+// ==============================
+
 $("#authorForm")?.addEventListener("submit", async (event) => {
     event.preventDefault();
 
@@ -321,13 +377,13 @@ $("#authorForm")?.addEventListener("submit", async (event) => {
     }
 
     const submitButton = $("#authorSubmit");
-    submitButton.disabled = true;
+    if (submitButton) submitButton.disabled = true;
 
     try {
-        await getUser();
-
         await apiRequest(
-            id ? `/api/authors/${encodeURIComponent(id)}` : "/api/authors",
+            id
+                ? `/api/authors/${encodeURIComponent(id)}`
+                : "/api/authors",
             {
                 method: id ? "PUT" : "POST",
                 body: JSON.stringify({ name })
@@ -343,13 +399,16 @@ $("#authorForm")?.addEventListener("submit", async (event) => {
         await loadData();
     } catch (error) {
         console.error("Gagal menyimpan penulis:", error);
-        showMessage("#authorMessage", "Gagal menyimpan penulis: " + error.message);
+        showMessage("#authorMessage", `Gagal menyimpan penulis: ${error.message}`);
     } finally {
-        submitButton.disabled = false;
+        if (submitButton) submitButton.disabled = false;
     }
 });
 
-// Tombol edit dan DELETE buku/penulis
+// ==============================
+// EDIT DAN DELETE BUKU/PENULIS
+// ==============================
+
 document.addEventListener("click", async (event) => {
     const button = event.target.closest("[data-action]");
     if (!button) return;
@@ -386,7 +445,10 @@ document.addEventListener("click", async (event) => {
 
     if (action === "delete-book") {
         const book = books.find((item) => String(item.id) === String(id));
+
         if (!book || !confirm(`Yakin hapus buku "${book.title}"?`)) return;
+
+        button.disabled = true;
 
         try {
             await apiRequest(`/api/books/${encodeURIComponent(id)}`, {
@@ -397,14 +459,20 @@ document.addEventListener("click", async (event) => {
             await loadData();
         } catch (error) {
             console.error("Gagal menghapus buku:", error);
-            showMessage("#bookMessage", "Gagal menghapus buku: " + error.message);
+            showMessage("#bookMessage", `Gagal menghapus buku: ${error.message}`);
+        } finally {
+            button.disabled = false;
         }
+
         return;
     }
 
     if (action === "delete-author") {
         const author = authors.find((item) => String(item.id) === String(id));
+
         if (!author || !confirm(`Yakin hapus penulis "${author.name}"?`)) return;
+
+        button.disabled = true;
 
         try {
             await apiRequest(`/api/authors/${encodeURIComponent(id)}`, {
@@ -415,19 +483,27 @@ document.addEventListener("click", async (event) => {
             await loadData();
         } catch (error) {
             console.error("Gagal menghapus penulis:", error);
-            showMessage("#authorMessage", "Gagal menghapus penulis: " + error.message);
+            showMessage("#authorMessage", `Gagal menghapus penulis: ${error.message}`);
+        } finally {
+            button.disabled = false;
         }
     }
 });
 
-// Batalkan proses edit
+// ==============================
+// BATAL EDIT
+// ==============================
+
 $("#cancelBookEdit")?.addEventListener("click", resetBookForm);
 $("#cancelAuthorEdit")?.addEventListener("click", resetAuthorForm);
 
-// Logout tetap memakai Supabase Auth
+// ==============================
+// LOGOUT
+// ==============================
+
 $("#logoutBtn")?.addEventListener("click", async () => {
     const button = $("#logoutBtn");
-    button.disabled = true;
+    if (button) button.disabled = true;
 
     try {
         const { error } = await supabase.auth.signOut();
@@ -437,11 +513,15 @@ $("#logoutBtn")?.addEventListener("click", async () => {
     } catch (error) {
         console.error("Logout gagal:", error);
         alert("Logout gagal: " + error.message);
-        button.disabled = false;
+
+        if (button) button.disabled = false;
     }
 });
 
-// Jalankan dashboard
+// ==============================
+// JALANKAN DASHBOARD
+// ==============================
+
 async function startApp() {
     try {
         const user = await getUser();

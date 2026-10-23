@@ -19,7 +19,6 @@ if (!SUPABASE_URL || !SUPABASE_KEY) {
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-// Verifikasi token login Supabase
 async function verifyToken(req, res, next) {
     const authHeader = req.headers.authorization;
 
@@ -40,8 +39,6 @@ async function verifyToken(req, res, next) {
 
         req.user = data.user;
 
-        // Gunakan token pengguna untuk query database,
-        // sehingga kebijakan RLS Supabase tetap berlaku.
         req.userSupabase = createClient(SUPABASE_URL, SUPABASE_KEY, {
             global: {
                 headers: {
@@ -64,7 +61,6 @@ async function verifyToken(req, res, next) {
     }
 }
 
-// Format respons API
 function sendError(res, error) {
     console.error("Supabase error:", error.message);
 
@@ -78,7 +74,7 @@ app.get("/api/status", (req, res) => {
     res.json({ message: "Pixel Vault API berhasil berjalan!" });
 });
 
-// Log login untuk debugging
+// Log login
 app.post("/api/login-log", (req, res) => {
     console.log("Login log diterima.");
     res.json({ message: "Log diterima." });
@@ -100,7 +96,6 @@ app.get("/api/me", verifyToken, (req, res) => {
 // Kolom: id, title, slug, user_id
 // ==============================
 
-// Ambil semua buku milik pengguna
 app.get("/api/books", verifyToken, async (req, res) => {
     const { data, error } = await req.userSupabase
         .from("books")
@@ -113,7 +108,6 @@ app.get("/api/books", verifyToken, async (req, res) => {
     res.json({ data: data || [] });
 });
 
-// Tambah buku
 app.post("/api/books", verifyToken, async (req, res) => {
     const title = String(req.body.title || "").trim();
     const slug = String(req.body.slug || "").trim();
@@ -139,7 +133,6 @@ app.post("/api/books", verifyToken, async (req, res) => {
     res.status(201).json({ data });
 });
 
-// Edit buku milik pengguna
 app.put("/api/books/:id", verifyToken, async (req, res) => {
     const title = String(req.body.title || "").trim();
     const slug = String(req.body.slug || "").trim();
@@ -169,7 +162,6 @@ app.put("/api/books/:id", verifyToken, async (req, res) => {
     res.json({ data });
 });
 
-// Hapus buku milik pengguna
 app.delete("/api/books/:id", verifyToken, async (req, res) => {
     const { data, error } = await req.userSupabase
         .from("books")
@@ -195,7 +187,6 @@ app.delete("/api/books/:id", verifyToken, async (req, res) => {
 // Kolom: id, name, user_id
 // ==============================
 
-// Ambil semua penulis milik pengguna
 app.get("/api/authors", verifyToken, async (req, res) => {
     const { data, error } = await req.userSupabase
         .from("authors")
@@ -208,7 +199,6 @@ app.get("/api/authors", verifyToken, async (req, res) => {
     res.json({ data: data || [] });
 });
 
-// Tambah penulis
 app.post("/api/authors", verifyToken, async (req, res) => {
     const name = String(req.body.name || "").trim();
 
@@ -232,7 +222,6 @@ app.post("/api/authors", verifyToken, async (req, res) => {
     res.status(201).json({ data });
 });
 
-// Edit penulis
 app.put("/api/authors/:id", verifyToken, async (req, res) => {
     const name = String(req.body.name || "").trim();
 
@@ -261,7 +250,6 @@ app.put("/api/authors/:id", verifyToken, async (req, res) => {
     res.json({ data });
 });
 
-// Hapus penulis
 app.delete("/api/authors/:id", verifyToken, async (req, res) => {
     const { data, error } = await req.userSupabase
         .from("authors")
