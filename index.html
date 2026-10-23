@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="theme-color" content="#080612">
+    <meta
+        name="description"
+        content="Dashboard CRUD Books dan Authors Pixel Vault."
+    >
+
+    <title>Zull Lyniee | Pixel Vault</title>
+
+    <!-- Tailwind CSS untuk latihan tugas PKL -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Konfigurasi warna Pixel Vault -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        pixel: {
+                            dark: "#080612",
+                            purple: "#a855f7",
+                            cyan: "#22d3ee"
+                        }
+                    }
+                }
+            }
+        };
+    </script>
+
+    <!-- Pertahankan CSS dashboard -->
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div class="background-grid"></div>
+    <div class="glow glow-purple"></div>
+    <div class="glow glow-cyan"></div>
+
+    <div class="anime-decorations">
+        <img src="anime-2.jpg" alt="" class="anime-decoration anime-decoration-one">
+        <img src="anime-3.jpg" alt="" class="anime-decoration anime-decoration-two">
+        <img src="anime-4.jpg" alt="" class="anime-decoration anime-decoration-three">
+    </div>
+
+    <div class="app-container">
+
+        <aside class="sidebar">
+            <a href="#" class="brand">
+                <span class="brand-icon">🎮</span>
+                <span class="brand-text">
+                    <strong>ZULL <span>LYNIEE</span></strong>
+                    <small>PIXEL VAULT</small>
+                </span>
+            </a>
+
+            <div class="sidebar-label">MAIN MENU</div>
+
+            <nav class="sidebar-nav">
+                <button type="button" class="nav-item active" data-page="dashboard">
+                    <span class="nav-icon">⌂</span>
+                    <span>Dashboard</span>
+                </button>
+
+                <button type="button" class="nav-item" data-page="books">
+                    <span class="nav-icon">▤</span>
+                    <span>Books Collection</span>
+                </button>
+
+                <button type="button" class="nav-item" data-page="authors">
+                    <span class="nav-icon">♙</span>
+                    <span>Authors</span>
+                </button>
+            </nav>
+
+            <div class="sidebar-profile">
+                <img src="anime-2.jpg" alt="Anime profile" class="profile-image">
+                <div class="profile-info">
+                    <strong id="profileUsername">Player</strong>
+                    <span>Pixel Vault Player</span>
+                </div>
+                <span class="online-dot"></span>
+            </div>
+
+            <div class="player-card">
+                <span class="player-card-icon">✦</span>
+                <p>YOUR OWN WORLD</p>
+                <small>Collect your favorite stories.</small>
+                <div class="player-progress"><span></span></div>
+                <small>PIXEL VAULT SYSTEM</small>
+            </div>
+
+            <button type="button" class="logout-button" id="logoutBtn">
+                <span>↪</span> Logout
+            </button>
+        </aside>
+
+        <main class="main-content">
+
+            <header class="topbar">
+                <div>
+                    <p class="topbar-eyebrow">JAPANESE GAMING WORLD</p>
+                    <h2>Pixel <span>Vault</span></h2>
+                </div>
+                <div class="topbar-status">
+                    <span class="status-dot"></span>
+                    SYSTEM ONLINE
+                </div>
+            </header>
+
+            <!-- DASHBOARD -->
+            <section class="page-section active" id="dashboardPage">
+                <div class="hero-card">
+                    <img
+                        src="mio-hamiya.jpg"
+                        alt="Anime character Mio Hamiya"
+                        class="hero-image"
+                        onerror="this.style.display='none'; document.getElementById('imageFallback').style.display='flex';"
+                    >
+
+                    <div class="hero-image-fallback" id="imageFallback">
+                        <span>✦</span>
+                        <p>PIXEL VAULT</p>
+                    </div>
+
+                    <div class="hero-overlay"></div>
+
+                    <div class="hero-content">
+                        <span class="mini-tag">✦ WELCOME TO YOUR WORLD</span>
+                        <h1>ENTER YOUR<br><span>OWN WORLD.</span></h1>
+                        <p>Kelola koleksi buku dan penulis favoritmu dalam satu tempat.</p>
+                        <button type="button" class="primary-button" id="exploreBtn">
+                            EXPLORE COLLECTION <span>↗</span>
+                        </button>
+                    </div>
+
+                    <div class="hero-corner">PV / 2026</div>
+                </div>
+
+                <div class="section-heading">
+                    <div>
+                        <p class="section-eyebrow">YOUR COLLECTION</p>
+                        <h2>Vault <span>Overview</span></h2>
+                    </div>
+                    <span class="section-chip">LIVE DATA</span>
+                </div>
+
+                <div class="stats-grid">
+                    <article class="stat-card">
+                        <div class="stat-top">
+                            <span class="stat-icon purple">▤</span>
+                            <span class="stat-label">BOOKS</span>
+                        </div>
+                        <h3 id="totalBooks">0</h3>
+                        <p>Total koleksi buku</p>
+                        <div class="stat-line purple-line"></div>
+                    </article>
+
+                    <article class="stat-card">
+                        <div class="stat-top">
+                            <span class="stat-icon cyan">♙</span>
+                            <span class="stat-label">AUTHORS</span>
+                        </div>
+                        <h3 id="totalAuthors">0</h3>
+                        <p>Total penulis</p>
+                        <div class="stat-line cyan-line"></div>
+                    </article>
+
+                    <article class="stat-card">
+                        <div class="stat-top">
+                            <span class="stat-icon pink">✦</span>
+                            <span class="stat-label">COLLECTION</span>
+                        </div>
+                        <h3>PV<span class="stat-small">.01</span></h3>
+                        <p>Your personal library</p>
+                        <div class="stat-line pink-line"></div>
+                    </article>
+                </div>
+
+                <div class="content-card recent-card">
+                    <div class="card-heading">
+                        <div>
+                            <p class="section-eyebrow">LATEST ENTRIES</p>
+                            <h3>Recent <span>Collection</span></h3>
+                        </div>
+                        <button type="button" class="secondary-button" id="viewBooksBtn">
+                            VIEW BOOKS ↗
+                        </button>
+                    </div>
+                    <div id="recentList" class="recent-list">
+                        <p class="empty-state">Memuat koleksi buku...</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- BOOKS -->
+            <section class="page-section" id="booksPage">
+                <div class="page-intro">
+                    <p class="section-eyebrow">MANAGE YOUR LIBRARY</p>
+                    <h1>Books <span>Collection</span></h1>
+                    <p>Tambahkan, edit, dan hapus koleksi buku kamu.</p>
+                </div>
+
+                <div class="content-card form-card">
+                    <div class="card-heading">
+                        <div>
+                            <p class="section-eyebrow">BOOK DATABASE</p>
+                            <h3>Book <span>Editor</span></h3>
+                        </div>
+                        <span class="section-chip">BOOKS</span>
+                    </div>
+
+                    <form id="bookForm">
+                        <input type="hidden" id="bookId">
+
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="bookTitle">JUDUL BUKU</label>
+                                <input type="text" id="bookTitle"
+                                    placeholder="Masukkan judul buku" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="bookSlug">SLUG BUKU</label>
+                                <input type="text" id="bookSlug"
+                                    placeholder="contoh: belajar-javascript" required>
+                            </div>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" class="primary-button" id="bookSubmit">
+                                + SIMPAN BUKU
+                            </button>
+                            <button type="button" class="secondary-button"
+                                id="cancelBookEdit" hidden>
+                                BATAL EDIT
+                            </button>
+                        </div>
+
+                        <p id="bookMessage" class="form-message" role="status"></p>
+                    </form>
+                </div>
+
+                <div class="content-card list-card">
+                    <div class="card-heading">
+                        <div>
+                            <p class="section-eyebrow">SAVED DATA</p>
+                            <h3>Book <span>List</span></h3>
+                        </div>
+                    </div>
+                    <div id="bookList" class="data-list">
+                        <p class="empty-state">Memuat koleksi buku...</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- AUTHORS -->
+            <section class="page-section" id="authorsPage">
+                <div class="page-intro">
+                    <p class="section-eyebrow">MANAGE YOUR WRITERS</p>
+                    <h1>Authors <span>Database</span></h1>
+                    <p>Kelola data penulis yang ada di Pixel Vault.</p>
+                </div>
+
+                <div class="content-card form-card">
+                    <div class="card-heading">
+                        <div>
+                            <p class="section-eyebrow">AUTHOR DATABASE</p>
+                            <h3>Author <span>Editor</span></h3>
+                        </div>
+                        <span class="section-chip">AUTHORS</span>
+                    </div>
+
+                    <form id="authorForm">
+                        <input type="hidden" id="authorId">
+
+                        <div class="form-group">
+                            <label for="authorName">NAMA PENULIS</label>
+                            <input type="text" id="authorName"
+                                placeholder="Masukkan nama penulis" required>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" class="primary-button" id="authorSubmit">
+                                + SIMPAN PENULIS
+                            </button>
+                            <button type="button" class="secondary-button"
+                                id="cancelAuthorEdit" hidden>
+                                BATAL EDIT
+                            </button>
+                        </div>
+
+                        <p id="authorMessage" class="form-message" role="status"></p>
+                    </form>
+                </div>
+
+                <div class="content-card list-card">
+                    <div class="card-heading">
+                        <div>
+                            <p class="section-eyebrow">SAVED DATA</p>
+                            <h3>Author <span>List</span></h3>
+                        </div>
+                    </div>
+                    <div id="authorList" class="data-list">
+                        <p class="empty-state">Memuat data penulis...</p>
+                    </div>
+                </div>
+            </section>
+
+            <footer class="main-footer">
+                <span>© 2026 ZULL LYNIEE</span>
+                <span>PIXEL VAULT · MADE FOR GAMERS ♡</span>
+            </footer>
+
+        </main>
+    </div>
+
+    <!-- Cek sesi login -->
+    <script type="module" src="auth-guard.js"></script>
+
+    <!-- CRUD, navigasi, profil, dan logout -->
+    <script type="module" src="script.js"></script>
+
+</body>
+</html>
